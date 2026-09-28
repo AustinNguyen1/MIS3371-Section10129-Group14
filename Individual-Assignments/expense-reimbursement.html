@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    WEEK 4 — SESSION 2 LIVE DEMO
+    Goal: turn the semantic page from Session 1 into an accessible transaction form.
+
+    Teaching focus:
+    1. <form>
+    2. <label> + for/id connection
+    3. id vs name
+    4. Appropriate control types
+    5. <fieldset> + <legend>
+    6. Native HTML constraints
+    7. Accessibility
+    8. Validation vs business rules
+  -->
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Reimbursement</title>
+
+  <!-- Connects the HTML file to the separate CSS file -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <header>
+    <h1>Expense Reimbursement</h1>
+    <p>Submit one business expense for reimbursement.</p>
+  </header>
+
+  <main>
+
+    <section>
+      <h2>Before You Submit</h2>
+      <p>
+        Complete the required fields below.
+        Keep your receipt available when company policy requires one.
+      </p>
+    </section>
+
+    <section>
+      <h2>Expense Details</h2>
+
+      <!--
+        <form> groups the controls that participate in one submission.
+
+        method="get" is used only for this classroom demo.
+        After a valid submission, notice that the field NAMES appear
+        in the browser URL as submitted data.
+
+        In the real capstone, submission will later go through
+        JavaScript/API/backend logic.
+      -->
+
+      <form method="get">
+
+        <!--
+          <fieldset> groups related controls.
+          <legend> gives the group a meaningful name.
+        -->
+        <fieldset>
+
+          <legend>Expense Information</legend>
+
+          <!-- Employee ID -->
+          <div class="form-group">
+            <label for="employeeId">Employee ID</label>
+
+            <input
+              id="employeeId"
+              name="employeeId"
+              type="text"
+              required
+            >
+          </div>
+
+          <!-- Expense Date -->
+          <div class="form-group">
+            <label for="expenseDate">Expense Date</label>
+
+            <input
+              id="expenseDate"
+              name="expenseDate"
+              type="date"
+              required
+            >
+          </div>
+
+          <!-- Category -->
+          <div class="form-group">
+            <label for="category">Category</label>
+
+            <select
+              id="category"
+              name="category"
+              required
+            >
+              <option value="">Choose a category</option>
+              <option value="travel">Travel</option>
+              <option value="meals">Meals</option>
+              <option value="supplies">Supplies</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <!-- Amount -->
+          <div class="form-group">
+            <label for="amount">Expense Amount ($)</label>
+
+            <input
+              id="amount"
+              name="amount"
+              type="number"
+              required
+              min="0.01"
+              step="0.01"
+            >
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label for="description">
+              Business Purpose / Description
+            </label>
+
+            <textarea
+              id="description"
+              name="description"
+              rows="4"
+              cols="45"
+              required
+            ></textarea>
+          </div>
+
+          <!-- Receipt Checkbox -->
+          <div class="checkbox-group">
+            <input
+              id="receiptAttached"
+              name="receiptAttached"
+              type="checkbox"
+              value="yes"
+            >
+
+            <label for="receiptAttached">
+              Receipt attached
+            </label>
+          </div>
+
+        </fieldset>
+
+        <!-- Submit button -->
+        <button type="submit">
+          Submit Request
+        </button>
+
+      </form>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <p>MIS 3371 — Week 4 Live Demo</p>
+  </footer>
+
+</body>
+</html>
