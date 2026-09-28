@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Reimbursement</title>
+  </head>
+
+  <body>
+    <header>
+      <h1>Expense Reimbursement</h1>
+      <p>Submit one business expense for reimbursement.</p>
+    </header>
+
+    <main>
+      <section class="page-section">
+        <h2>Before You Submit</h2>
+        <p>
+          Complete the required fields below. Keep your receipt available when
+          company policy requires one.
+        </p>
+      </section>
+
+      <section class="page-section">
+        <h2>Expense Details</h2>
+
+        <!--
+        <form> groups the controls that participate in one submission.
+
+        method="get" is used only for this classroom demo.
+        After a valid submission, notice that the field NAMES appear
+        in the browser URL as submitted data.
+
+        In the real capstone, submission will later go through
+        JavaScript/API/backend logic.
+      -->
+        <form method="get">
+          <!--
+          <fieldset> groups related controls.
+          <legend> gives the group a meaningful name.
+        -->
+          <fieldset>
+            <legend>Expense Information</legend>
+
+            <!-- =====================================================
+               EMPLOYEE ID
+               ===================================================== -->
+
+            <!--
+            for="employeeId" must match id="employeeId".
+            This connects the visible label to the input.
+          -->
+            <label for="employeeId">Employee ID</label>
+            <!--for connect the label to input id-->
+            <input
+              class="form-control"
+              id="employeeId"
+              name="employeeId"
+              type="text"
+              required
+            />
+            <!-- <br> new line-->
+            <br /><br />
+
+            <!-- =====================================================
+               EXPENSE DATE
+               ===================================================== -->
+
+            <label for="expenseDate">Expense Date</label>
+
+            <input
+              class="form-control"
+              id="expenseDate"
+              name="expenseDate"
+              type="date"
+              required
+            />
+
+            <br /><br />
+
+            <!-- =====================================================
+               CATEGORY
+               ===================================================== -->
+
+            <label for="category">Category</label>
+
+            <!--
+            <select> is appropriate because the business allows
+            a known set of categories.
+          -->
+            <select class="form-control" id="category" name="category" required>
+              <option value="">Choose a category</option>
+              <option value="travel">Travel</option>
+              <option value="meals">Meals</option>
+              <option value="supplies">Supplies</option>
+              <option value="other">Other</option>
+            </select>
+
+            <br /><br />
+
+            <!-- =====================================================
+               AMOUNT
+               ===================================================== -->
+
+            <label for="amount">Expense Amount ($)</label>
+
+            <!--
+            Native constraints:
+            required   = cannot be empty
+            min="0.01" = must be greater than zero
+            step="0.01" = allows values such as 184.50
+
+            IMPORTANT:
+            We do NOT set max="5000".
+            An amount above $5,000 is still VALID data.
+            It simply triggers a different business workflow later.
+          -->
+            <input
+              class="form-control"
+              id="amount"
+              name="amount"
+              type="number"
+              required
+              min="0.01"
+              step="0.01"
+            />
+
+            <br /><br />
+
+            <!-- =====================================================
+               DESCRIPTION
+               ===================================================== -->
+
+            <label for="description">Business Purpose / Description</label>
+            <br />
+
+            <textarea
+              class="form-control"
+              id="description"
+              name="description"
+              rows="4"
+              cols="45"
+              required
+            ></textarea>
+
+            <br /><br />
+
+            <!-- =====================================================
+               RECEIPT CHECKBOX
+               ===================================================== -->
+
+            <!--
+            Checkbox = yes/no flag.
+
+            BUSINESS RULE FOR LATER:
+            If amount > $75, a receipt is required.
+
+            Basic HTML cannot express this conditional rule by itself.
+            JavaScript and server/application logic will handle it later.
+          -->
+            <input
+              id="receiptAttached"
+              name="receiptAttached"
+              type="checkbox"
+              value="yes"
+            />
+
+            <label for="receiptAttached"> Receipt attached </label>
+          </fieldset>
+
+          <br />
+
+          <!--
+          type="submit" asks the browser to submit the form.
+
+          Before submission, the browser checks the native constraints.
+          Try:
+          - leaving a required field empty
+          - entering amount = 0
+          - entering amount = 5600
+        -->
+          <button class="primary-button" type="submit">Submit Request</button>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <p>MIS 3371 — Week 4 Live Demo</p>
+    </footer>
+  </body>
+</html>

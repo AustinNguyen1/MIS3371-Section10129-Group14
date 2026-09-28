@@ -1,0 +1,91 @@
+/* Page styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+}
+
+header {
+  text-align: center;
+  color: #234a7a;
+  padding: 20px;
+}
+
+main {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Reusable section style */
+.page-section {
+  background-color: white;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+fieldset {
+  border: 1px solid #ccc;
+  padding: 20px;
+}
+
+legend {
+  font-weight: bold;
+}
+
+label {
+  font-weight: bold;
+}
+
+/* Reusable form control style */
+.form-control {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  margin-top: 5px;
+  border: 1px solid #999;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* Visible keyboard focus */
+.form-control:focus,
+input[type="checkbox"]:focus,
+.primary-button:focus {
+  outline: 2px solid #234a7a;
+  outline-offset: 2px;
+}
+
+/* Button styling */
+.primary-button {
+  background-color: #234a7a;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+footer {
+  text-align: center;
+  padding: 15px;
+}
+
+/* Responsive layout for narrow screens */
+@media (max-width: 600px) {
+  main {
+    padding: 10px;
+  }
+
+  .page-section {
+    padding: 15px;
+  }
+
+  .primary-button {
+    width: 100%;
+  }
+}
