@@ -1,0 +1,67 @@
+body {
+  font-family: Arial;
+  background-color: #f4f4f4;
+}
+
+header {
+  text-align: center;
+  color: #234a7a;
+}
+
+main {
+  background-color: white;
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+}
+
+fieldset {
+  border: 1px solid #ccc;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus,
+button:focus {
+  outline: 2px solid #234a7a;
+}
+
+button {
+  background-color: #234a7a;
+  color: white;
+  padding: 10px;
+  margin-top: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+footer {
+  text-align: center;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-field {
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
