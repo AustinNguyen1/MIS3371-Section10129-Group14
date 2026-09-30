@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MarketStreet – Place a Trade</title>
+    <link rel="stylesheet" href="trade-ui.css" />
+    <script src="trade-ui.js" defer></script>
+  </head>
+
+  <body>
+    <header>
+      <h1>MarketStreet</h1>
+      <p>Paper Trading Platform</p>
+    </header>
+
+    <main>
+      <!-- Account snapshot so the user knows what they can afford / sell -->
+      <section class="account" aria-label="Your account">
+        <div>
+          <span class="account-label">Cash</span>
+          <strong id="cash">$10,000.00</strong>
+        </div>
+        <div>
+          <span class="account-label">You own</span>
+          <strong id="owned">—</strong>
+        </div>
+      </section>
+
+      <form id="trade-form" novalidate>
+        <h2>Place a Trade</h2>
+
+        <!-- Step 1: Buy or Sell -->
+        <fieldset class="step">
+          <legend><span class="step-num">1</span> What do you want to do?</legend>
+          <div class="toggle toggle-trade">
+            <input type="radio" id="trade-buy" name="trade" value="buy" checked />
+            <label for="trade-buy">Buy</label>
+            <input type="radio" id="trade-sell" name="trade" value="sell" />
+            <label for="trade-sell">Sell</label>
+          </div>
+        </fieldset>
+
+        <!-- Step 2: Stock -->
+        <fieldset class="step">
+          <legend><span class="step-num">2</span> Which stock?</legend>
+          <div class="chips" id="symbol-chips" role="group" aria-label="Popular stocks"></div>
+          <label for="symbol" class="sub-label">Or type a symbol</label>
+          <input
+            id="symbol"
+            name="symbol"
+            type="text"
+            placeholder="e.g. AAPL"
+            autocomplete="off"
+            maxlength="5"
+            aria-describedby="symbol-help symbol-error"
+          />
+          <p id="symbol-help" class="help"></p>
+          <p id="symbol-error" class="error" aria-live="polite"></p>
+        </fieldset>
+
+        <!-- Step 3: Shares -->
+        <fieldset class="step">
+          <legend><span class="step-num">3</span> How many shares?</legend>
+          <div class="stepper">
+            <button type="button" id="minus" aria-label="One less share">−</button>
+            <input
+              id="shares"
+              name="shares"
+              type="number"
+              min="1"
+              step="1"
+              value="1"
+              inputmode="numeric"
+              aria-label="Number of shares"
+              aria-describedby="shares-error"
+            />
+            <button type="button" id="plus" aria-label="One more share">+</button>
+          </div>
+          <button type="button" id="max-btn" class="link-btn">Use max</button>
+          <p id="shares-error" class="error" aria-live="polite"></p>
+        </fieldset>
+
+        <!-- Step 4: Order type (optional, Market by default) -->
+        <details class="advanced">
+          <summary>Order type: <span id="order-summary">Market (best price now)</span></summary>
+          <div class="toggle">
+            <input type="radio" id="order-market" name="order" value="market" checked />
+            <label for="order-market">Market</label>
+            <input type="radio" id="order-limit" name="order" value="limit" />
+            <label for="order-limit">Limit</label>
+          </div>
+          <div id="limit-box" hidden>
+            <label for="price" class="sub-label">Limit price per share ($)</label>
+            <input
+              id="price"
+              name="price"
+              type="number"
+              min="0.01"
+              step="0.01"
+              placeholder="e.g. 180.00"
+              aria-describedby="price-error"
+            />
+            <p id="price-error" class="error" aria-live="polite"></p>
+          </div>
+        </details>
+
+        <!-- Live summary -->
+        <div class="summary" aria-live="polite">
+          <p id="summary-text">Pick a stock to see your estimated total.</p>
+          <p class="total"><span>Estimated total</span> <strong id="total">$0.00</strong></p>
+        </div>
+
+        <button type="submit" id="submit-btn" class="submit buy">Review &amp; Buy</button>
+      </form>
+
+      <!-- Result shown after submit (replaces alert) -->
+      <section id="result" class="result" hidden aria-live="assertive">
+        <h2 id="result-title"></h2>
+        <dl id="result-details"></dl>
+        <button type="button" id="new-trade" class="submit">Place another trade</button>
+      </section>
+    </main>
+
+    <footer>
+      <p>Copyright 2026 MarketStreet</p>
+    </footer>
+  </body>
+</html>

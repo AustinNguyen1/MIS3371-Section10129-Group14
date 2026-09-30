@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MarketStreet – First Check-In</title>
+    <link rel="stylesheet" href="slides.css" />
+    <script src="slides.js" defer></script>
+  </head>
+
+  <body>
+    <div class="viewport">
+      <div class="stage" id="stage">
+
+        <!-- 1. Title -->
+        <section class="slide title-slide" data-notes="Introduce the team and the project: MarketStreet is a paper-trading platform for beginner investors. Today we walk through the system design for our main transaction.">
+          <p class="kicker">MIS 3371 · First Check-In</p>
+          <h1>MarketStreet</h1>
+          <p class="subtitle">Paper Trading Platform — System Design</p>
+          <p class="hint">Press <kbd>→</kbd> or click to begin</p>
+        </section>
+
+        <!-- 2. Problem -->
+        <section class="slide" data-notes="Beginners want to learn trading without risking money. Real platforms are overwhelming. MarketStreet keeps it simple and uses fake money only.">
+          <h2>The problem</h2>
+          <div class="two-col">
+            <div class="card">
+              <h3>Why it matters</h3>
+              <ul>
+                <li>Beginners want to learn trading <b>without risking real money</b></li>
+                <li>Real platforms are full of advanced features</li>
+                <li>Hard to see how one trade actually works</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Our solution</h3>
+              <ul>
+                <li>Simulated account with <b>virtual cash</b></li>
+                <li>Buy or sell stocks at simulated prices</li>
+                <li>Every trade is validated, recorded, and explained</li>
+              </ul>
+            </div>
+          </div>
+          <p class="footnote">Out of scope: real money, bank links, margin, short selling, options, crypto.</p>
+        </section>
+
+        <!-- 3. Main transaction -->
+        <section class="slide" data-notes="Our main transaction is submitting a simulated stock trade. Walk left to right: trigger, inputs, what the system does, the outcome, and what gets recorded.">
+          <h2>Main transaction: submit a simulated trade</h2>
+          <div class="flow">
+            <div class="flow-step"><span>Trigger</span>User wants to buy or sell a stock</div>
+            <div class="flow-step"><span>Inputs</span>Symbol, Buy/Sell, shares, order type</div>
+            <div class="flow-step"><span>System action</span>Check rules, get price, execute, update portfolio</div>
+            <div class="flow-step"><span>Outcome</span>Accepted — or Rejected with a reason</div>
+          </div>
+          <div class="card record">
+            <h3>Official record</h3>
+            <p>Transaction ID · User · Stock · Action · Shares · Execution price · Total value · Timestamp · Status</p>
+          </div>
+        </section>
+
+        <!-- 4. Architecture -->
+        <section class="slide" data-notes="Three tiers. Presentation collects input and shows results. Application logic enforces the rules and gets the price from the market data provider. Data tier stores the official record. Key line: the application handles the rules, the data tier stores the records.">
+          <h2>Three-tier architecture</h2>
+          <figure class="diagram">
+            <img src="images/architecture-v1.png" alt="Three-tier architecture: Presentation, Application Logic, and Data tiers, with a Market Data Provider feeding prices to the Application tier" />
+          </figure>
+        </section>
+
+        <!-- 5. Responsibilities -->
+        <section class="slide" data-notes="Who does what. The browser only gives quick feedback. Anything official — IDs, status, timestamps, rules, authorization — is decided by the application and saved by the data tier. The user can never set these.">
+          <h2>Who is responsible for what</h2>
+          <table class="matrix">
+            <thead>
+              <tr><th>Responsibility</th><th>Presentation</th><th>Application Logic</th><th>Data</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Collect input</td><td>✓</td><td></td><td></td></tr>
+              <tr><td>Required-field &amp; immediate feedback</td><td>✓</td><td></td><td></td></tr>
+              <tr><td>Display status &amp; confirmation</td><td>✓</td><td></td><td></td></tr>
+              <tr><td>Transaction ID</td><td></td><td>✓</td><td>✓</td></tr>
+              <tr><td>Official status</td><td></td><td>✓</td><td>✓</td></tr>
+              <tr><td>Audit timestamps</td><td></td><td>✓</td><td>✓</td></tr>
+              <tr><td>Critical business rules</td><td></td><td>✓</td><td></td></tr>
+              <tr><td>Authorization</td><td></td><td>✓</td><td></td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- 6. Business rules -->
+        <section class="slide" data-notes="Eight business rules. 1-3 check the input, 4-5 check the account, 6 needs a real price, 7 and 8 describe what happens to the portfolio on success or failure.">
+          <h2>Business rules</h2>
+          <div class="rules">
+            <div class="rule"><b>BR-1</b>Trade type is Buy or Sell</div>
+            <div class="rule"><b>BR-2</b>Stock symbol is recognized</div>
+            <div class="rule"><b>BR-3</b>Shares = positive whole number</div>
+            <div class="rule"><b>BR-4</b>Enough cash for a Buy</div>
+            <div class="rule"><b>BR-5</b>Enough shares for a Sell (no short selling)</div>
+            <div class="rule"><b>BR-6</b>A valid stock price is required</div>
+            <div class="rule good"><b>BR-7</b>Accepted → cash &amp; holdings update</div>
+            <div class="rule bad"><b>BR-8</b>Rejected → nothing changes (rollback on failure)</div>
+          </div>
+        </section>
+
+        <!-- 7. Workflow -->
+        <section class="slide" data-notes="Follow the black arrows for the happy path: user fills the form, application sets Submitted, runs the three checks, sets Validated, updates cash and holdings, sets Accepted, confirmation goes back to the user. Red arrows are every way a trade can be rejected. Click the diagram to zoom in.">
+          <h2>Workflow — stock trade order</h2>
+          <figure class="diagram">
+            <img src="images/workflow-v1.png" alt="Swim-lane workflow of a stock trade order across Presentation, Application, and Data layers" />
+          </figure>
+        </section>
+
+        <!-- 8. State diagram -->
+        <section class="slide" data-notes="Only four states. Submitted when received, Validated when all rules pass, then Accepted or Rejected. Accepted and Rejected are final — a trade is never edited or reopened; a new order gets a new ID.">
+          <h2>Trade status: state diagram</h2>
+          <figure class="diagram">
+            <img src="images/state-diagram.png" alt="State diagram: Submitted to Validated to Accepted, with Rejected reachable from Submitted or Validated" />
+          </figure>
+        </section>
+
+        <!-- 9. State definitions -->
+        <section class="slide" data-notes="Definition of each state and when it is entered. Point out: users never set the status — only the application does.">
+          <h2>State definitions</h2>
+          <figure class="diagram">
+            <img src="images/state-definitions.png" alt="Table defining Submitted, Validated, Accepted, and Rejected states" />
+          </figure>
+        </section>
+
+        <!-- 10. Exceptions -->
+        <section class="slide" data-notes="Three ways things go wrong. 1: bad input is caught in the browser — no record is created. 2: a business rule fails — saved as Rejected, nothing changes. 3: the update fails partway — rolled back, saved as Rejected.">
+          <h2>Exception / failure paths</h2>
+          <div class="exceptions">
+            <div class="exc">
+              <span class="exc-num">1</span>
+              <div><b>Invalid input</b><p>Caught in the browser</p></div>
+              <div class="arrow">→</div>
+              <div class="exc-result">Show error message. No record created.</div>
+            </div>
+            <div class="exc">
+              <span class="exc-num">2</span>
+              <div><b>Business rule fails</b><p>BR-1 to BR-6</p></div>
+              <div class="arrow">→</div>
+              <div class="exc-result">Status = Rejected. Cash &amp; holdings unchanged.</div>
+            </div>
+            <div class="exc">
+              <span class="exc-num">3</span>
+              <div><b>Portfolio update fails</b><p>System error after validation</p></div>
+              <div class="arrow">→</div>
+              <div class="exc-result">Roll back. Status = Rejected. Values restored.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 11. Data dictionary -->
+        <section class="slide" data-notes="Key fields. The user only enters the top group. Everything else is derived or created by the application — that's what keeps the record trustworthy.">
+          <h2>Data dictionary — key fields</h2>
+          <div class="three-col">
+            <div class="card">
+              <h3>User enters</h3>
+              <ul class="fields">
+                <li>stockSymbol <em>AAPL</em></li>
+                <li>tradeType <em>Buy / Sell</em></li>
+                <li>shareQuantity <em>5</em></li>
+                <li>orderType <em>Market / Limit</em></li>
+                <li>limitPrice <em>if Limit</em></li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>App derives</h3>
+              <ul class="fields">
+                <li>userId <em>U10427</em></li>
+                <li>executionPrice <em>185.50</em></li>
+                <li>transactionValue <em>shares × price</em></li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>App controls</h3>
+              <ul class="fields">
+                <li>transactionId <em>TRD-00418</em></li>
+                <li>status <em>4 states</em></li>
+                <li>rejectionReason <em>if rejected</em></li>
+                <li>…At timestamps <em>submitted, validated, completed, updated</em></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- 12. Demo -->
+        <section class="slide" data-notes="Open the prototype. Show: pick a stock chip, change shares, watch the total update. Then try selling more shares than you own to show a Rejected trade with a reason.">
+          <h2>Prototype: trade form</h2>
+          <div class="two-col">
+            <div class="card">
+              <h3>Built to be easy</h3>
+              <ul>
+                <li>3 numbered steps: Buy/Sell → stock → shares</li>
+                <li>Live estimated total</li>
+                <li>Friendly errors next to each field</li>
+                <li>Result screen shows ID, status &amp; reason</li>
+              </ul>
+            </div>
+            <div class="card demo-card">
+              <p>Try it live</p>
+              <a class="demo-btn" href="../Trade-UI/trade-ui.html" target="_blank">Open trade form ↗</a>
+              <p class="footnote">Try selling 3 MSFT (you own 2) to see a rejection.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 13. End -->
+        <section class="slide title-slide" data-notes="Thank the audience and open for questions.">
+          <h1>Questions?</h1>
+          <p class="subtitle">MarketStreet · MIS 3371</p>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="progress"><div id="progress-bar"></div></div>
+    <nav class="controls" aria-label="Slide controls">
+      <button id="prev" aria-label="Previous slide">‹</button>
+      <span id="counter">1 / 1</span>
+      <button id="next" aria-label="Next slide">›</button>
+      <button id="notes-btn" title="Speaker notes (N)">Notes</button>
+      <button id="full-btn" title="Full screen (F)">Full screen</button>
+    </nav>
+
+    <aside id="notes" class="notes" hidden></aside>
+
+    <div id="lightbox" class="lightbox" hidden>
+      <img alt="" />
+      <p>Click or press Esc to close</p>
+    </div>
+  </body>
+</html>

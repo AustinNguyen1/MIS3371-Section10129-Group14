@@ -1,0 +1,494 @@
+:root {
+  --brand: #234a7a;
+  --brand-dark: #13294b;
+  --buy: #1a7f4b;
+  --sell: #c0392b;
+  --bg: #f4f6f9;
+  --text: #1d2733;
+  --muted: #5f6b7a;
+  --border: #d5dbe3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #0f1a2b;
+  font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  color: var(--text);
+}
+
+/* ---------- 16:9 stage scaled to fit any screen ---------- */
+.viewport {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1600px;
+  height: 900px;
+  transform-origin: center;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background: white;
+  padding: 70px 90px;
+  display: none;
+  flex-direction: column;
+  font-size: 30px;
+  line-height: 1.4;
+}
+
+.slide.active {
+  display: flex;
+  animation: fade 0.25s ease;
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.slide h2 {
+  margin: 0 0 36px;
+  font-size: 54px;
+  color: var(--brand-dark);
+  border-left: 10px solid var(--brand);
+  padding-left: 22px;
+}
+
+.slide h3 {
+  margin: 0 0 14px;
+  font-size: 32px;
+  color: var(--brand);
+}
+
+.slide ul {
+  margin: 0;
+  padding-left: 1.1em;
+}
+
+.slide li {
+  margin-bottom: 12px;
+}
+
+.footnote {
+  margin-top: auto;
+  font-size: 22px;
+  color: var(--muted);
+}
+
+/* ---------- Title slides ---------- */
+.title-slide {
+  background: linear-gradient(135deg, var(--brand-dark), var(--brand));
+  color: white;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.title-slide h1 {
+  font-size: 130px;
+  margin: 0;
+}
+
+.title-slide .subtitle {
+  font-size: 40px;
+  margin: 10px 0 0;
+  opacity: 0.9;
+}
+
+.kicker {
+  font-size: 26px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.75;
+  margin: 0 0 10px;
+}
+
+.hint {
+  position: absolute;
+  bottom: 60px;
+  font-size: 22px;
+  opacity: 0.7;
+}
+
+kbd {
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-family: inherit;
+}
+
+/* ---------- Layout helpers ---------- */
+.two-col,
+.three-col {
+  display: grid;
+  gap: 36px;
+}
+
+.two-col {
+  grid-template-columns: 1fr 1fr;
+}
+
+.three-col {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.card {
+  background: var(--bg);
+  border-radius: 18px;
+  padding: 34px 38px;
+}
+
+/* ---------- Main transaction flow ---------- */
+.flow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  margin-bottom: 36px;
+}
+
+.flow-step {
+  background: var(--bg);
+  border-top: 8px solid var(--brand);
+  border-radius: 14px;
+  padding: 26px;
+  font-size: 27px;
+  position: relative;
+}
+
+.flow-step span {
+  display: block;
+  font-weight: 700;
+  color: var(--brand);
+  margin-bottom: 10px;
+}
+
+.flow-step:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  right: -20px;
+  top: 40%;
+  font-size: 30px;
+  color: var(--brand);
+}
+
+.record p {
+  margin: 0;
+  font-size: 27px;
+}
+
+/* ---------- Diagram slides ---------- */
+.slide:has(.diagram) {
+  padding: 44px 60px 50px;
+}
+
+.slide:has(.diagram) h2 {
+  margin-bottom: 20px;
+  font-size: 44px;
+}
+
+.diagram {
+  flex: 1;
+  margin: 0;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.diagram img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  cursor: zoom-in;
+  border-radius: 8px;
+}
+
+/* ---------- Responsibility matrix ---------- */
+.matrix {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 26px;
+}
+
+.matrix th {
+  background: var(--brand-dark);
+  color: white;
+  padding: 14px 20px;
+  text-align: center;
+}
+
+.matrix th:first-child,
+.matrix td:first-child {
+  text-align: left;
+}
+
+.matrix td {
+  padding: 11px 20px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  font-weight: 700;
+  color: var(--buy);
+}
+
+.matrix td:first-child {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.matrix tbody tr:nth-child(-n + 3) td:first-child {
+  border-left: 8px solid #7fa7d6;
+}
+
+.matrix tbody tr:nth-child(n + 4) td:first-child {
+  border-left: 8px solid #86c29d;
+}
+
+/* ---------- Business rules ---------- */
+.rules {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+.rule {
+  background: var(--bg);
+  border-radius: 14px;
+  padding: 26px;
+  font-size: 26px;
+  min-height: 190px;
+}
+
+.rule b {
+  display: block;
+  font-size: 34px;
+  color: var(--brand);
+  margin-bottom: 10px;
+}
+
+.rule.good {
+  background: #e3f3e9;
+}
+
+.rule.good b {
+  color: var(--buy);
+}
+
+.rule.bad {
+  background: #fbe7e5;
+}
+
+.rule.bad b {
+  color: var(--sell);
+}
+
+/* ---------- Exceptions ---------- */
+.exceptions {
+  display: grid;
+  gap: 26px;
+}
+
+.exc {
+  display: grid;
+  grid-template-columns: 80px 1fr 60px 1.2fr;
+  align-items: center;
+  gap: 24px;
+  background: var(--bg);
+  border-radius: 16px;
+  padding: 24px 30px;
+}
+
+.exc-num {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: var(--brand-dark);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+  font-weight: 700;
+}
+
+.exc p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 24px;
+}
+
+.arrow {
+  font-size: 48px;
+  color: var(--sell);
+  text-align: center;
+}
+
+.exc-result {
+  background: #fbe7e5;
+  border-left: 8px solid var(--sell);
+  border-radius: 10px;
+  padding: 18px 22px;
+  font-size: 26px;
+}
+
+/* ---------- Data dictionary ---------- */
+.fields {
+  list-style: none;
+  padding: 0 !important;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 25px;
+}
+
+.fields em {
+  display: block;
+  font-family: system-ui, sans-serif;
+  font-style: normal;
+  font-size: 21px;
+  color: var(--muted);
+}
+
+/* ---------- Demo ---------- */
+.demo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.demo-card > p:first-child {
+  margin: 0 0 20px;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.demo-btn {
+  display: inline-block;
+  background: var(--buy);
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 22px 40px;
+  border-radius: 14px;
+}
+
+/* ---------- Controls ---------- */
+.progress {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+#progress-bar {
+  height: 100%;
+  width: 0;
+  background: #5ea0ef;
+  transition: width 0.25s;
+}
+
+.controls {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(15, 26, 43, 0.85);
+  color: white;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 14px;
+  opacity: 0.35;
+  transition: opacity 0.2s;
+}
+
+.controls:hover,
+.controls:focus-within {
+  opacity: 1;
+}
+
+.controls button {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#prev,
+#next {
+  font-size: 20px;
+  line-height: 1;
+}
+
+#counter {
+  min-width: 56px;
+  text-align: center;
+}
+
+/* ---------- Speaker notes ---------- */
+.notes {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  max-width: min(560px, calc(100% - 32px));
+  background: #fffbe6;
+  color: #3b3200;
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 17px;
+  line-height: 1.45;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 700px) {
+  .notes {
+    bottom: 64px;
+  }
+}
+
+/* ---------- Image zoom ---------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  padding: 16px;
+}
+
+.lightbox[hidden] {
+  display: none;
+}
+
+.lightbox img {
+  max-width: 100%;
+  max-height: calc(100% - 40px);
+  object-fit: contain;
+  background: white;
+}
+
+.lightbox p {
+  color: #aaa;
+  font-size: 14px;
+  margin: 10px 0 0;
+}
