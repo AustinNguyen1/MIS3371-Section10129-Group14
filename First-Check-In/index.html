@@ -158,28 +158,28 @@
             <div class="card">
               <h3>User enters</h3>
               <ul class="fields">
-                <li>stockSymbol <em>AAPL</em></li>
-                <li>tradeType <em>Buy / Sell</em></li>
-                <li>shareQuantity <em>5</em></li>
-                <li>orderType <em>Market / Limit</em></li>
-                <li>limitPrice <em>if Limit</em></li>
+                <li>stockSymbol <span class="type string">string</span><em>AAPL</em></li>
+                <li>tradeType <span class="type enum">enum</span><em>Buy / Sell</em></li>
+                <li>shareQuantity <span class="type integer">integer</span><em>5</em></li>
+                <li>orderType <span class="type enum">enum</span><em>Market / Limit</em></li>
+                <li>limitPrice <span class="type decimal">decimal</span><em>180.00 · only if Limit</em></li>
               </ul>
             </div>
             <div class="card">
               <h3>App derives</h3>
               <ul class="fields">
-                <li>userId <em>U10427</em></li>
-                <li>executionPrice <em>185.50</em></li>
-                <li>transactionValue <em>shares × price</em></li>
+                <li>userId <span class="type string">string</span><em>U10427</em></li>
+                <li>executionPrice <span class="type decimal">decimal</span><em>185.50</em></li>
+                <li>transactionValue <span class="type decimal">decimal</span><em>shares × price</em></li>
               </ul>
             </div>
             <div class="card">
               <h3>App controls</h3>
               <ul class="fields">
-                <li>transactionId <em>TRD-00418</em></li>
-                <li>status <em>4 states</em></li>
-                <li>rejectionReason <em>if rejected</em></li>
-                <li>…At timestamps <em>submitted, validated, completed, updated</em></li>
+                <li>transactionId <span class="type string">string</span><em>TRD-00418</em></li>
+                <li>status <span class="type enum">enum</span><em>Submitted / Validated / Accepted / Rejected</em></li>
+                <li>rejectionReason <span class="type string">string</span><em>Insufficient cash</em></li>
+                <li>submittedAt … <span class="type datetime">datetime</span><em>also validatedAt, completedAt, updatedAt</em></li>
               </ul>
             </div>
           </div>
