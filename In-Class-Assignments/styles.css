@@ -43,3 +43,8 @@ button {
 footer {
   text-align: center;
 }
+#quantityMessage {
+    color: red;
+    font-weight: 600;
+    margin-top: 5px;
+}
