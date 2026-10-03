@@ -23,5 +23,15 @@ function submitTrade() {
     console.log(summary);
     alert(summary);
 }
+// Business Rule:
+// A trade must have at least 1 share.
 
+function isValidShareQuantity(shares) {
+    return shares >= 1;
+}
+
+// Test cases
+console.log("0 shares:", isValidShareQuantity(0));
+console.log("1 share:", isValidShareQuantity(1));
+console.log("5 shares:", isValidShareQuantity(5));
 
