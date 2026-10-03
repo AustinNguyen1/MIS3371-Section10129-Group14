@@ -1,0 +1,157 @@
+/* WEEK 5 — SESSION 2 SOLUTION: responsive styling */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+  color: #23252A;
+  background: #F7F7F8;
+}
+
+.page-shell {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.site-header {
+  background: #FFFFFF;
+  border-bottom: 4px solid #C8102E;
+}
+
+h1,
+h2 {
+  color: #7A1735;
+}
+
+.intro-section {
+  margin-bottom: 24px;
+}
+
+form {
+  background: #FFFFFF;
+  padding: 24px;
+  border-radius: 10px;
+}
+
+fieldset {
+  margin: 0 0 24px;
+  padding: 20px;
+  border: 1px solid #D4D7DB;
+  border-radius: 8px;
+}
+
+legend {
+  padding: 0 8px;
+  font-weight: 700;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  border: 1px solid #BFC4CA;
+  border-radius: 6px;
+  background: #FFFFFF;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 3px solid #F3A9B8;
+  border-color: #C8102E;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkbox-row input {
+  width: auto;
+}
+
+.checkbox-row label {
+  margin: 0;
+  font-weight: 400;
+}
+
+button {
+  padding: 11px 18px;
+  font: inherit;
+  font-weight: 700;
+  color: #FFFFFF;
+  background: #C8102E;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(0.92);
+}
+
+button:focus-visible {
+  outline: 3px solid #F3A9B8;
+  outline-offset: 3px;
+}
+
+.site-footer {
+  margin-top: 32px;
+  color: #676B72;
+  background: #FFFFFF;
+  border-top: 1px solid #E4E5E7;
+}
+
+/*
+  When space becomes narrow, stack the two-field row.
+  The transaction is the same; only the layout changes.
+*/
+@media (max-width: 600px) {
+  .page-shell {
+    padding: 16px;
+  }
+
+  form {
+    padding: 16px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  button {
+    width: 100%;
+  }
+}
