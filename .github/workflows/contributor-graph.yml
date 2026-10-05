@@ -1,0 +1,58 @@
+name: Update Contributor Graph
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "Assets/contributor-timeline.svg"
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-graph:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate contributor graph
+        run: |
+          mkdir -p Assets
+          mkdir -p .contributor-graph
+
+          docker run --rm \
+            -v "$PWD:/work" \
+            -e GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" \
+            ghcr.io/ewels/contributor-graphs \
+            ${{ github.repository }} \
+            -o /work/.contributor-graph \
+            --title "MarketStreet Contributors" \
+            --sort first \
+            --theme light \
+            --width 1000 \
+            --format svg \
+            --refresh
+
+          SVG_FILE=$(find .contributor-graph -name "*.svg" | head -n 1)
+          cp "$SVG_FILE" Assets/contributor-timeline.svg
+
+      - name: Commit updated graph
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add Assets/contributor-timeline.svg
+
+          if git diff --cached --quiet; then
+            echo "Contributor graph is already up to date."
+          else
+            git commit -m "Update contributor graph"
+            git push
+          fi
