@@ -22,8 +22,7 @@ The purpose of this project is to demonstrate the complete processing of a stock
 
 ## Project Activity
 
-![MarketStreet Contributor Timeline](Assets/contributor-timeline.svg)
-
+![MarketStreet Team Activity](Assets/team-activity.svg)
 ## Team Members
 
 - Austin Nguyen
