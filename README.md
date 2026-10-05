@@ -22,7 +22,7 @@ The purpose of this project is to demonstrate the complete processing of a stock
 
 ## Project Activity
 
-![Repobeats analytics image](https://repobeats.axiom.co/api/embed/6236ca1f277ec27276f6677c3e7b5342c62c5bf3.svg "Repobeats analytics image")
+![MarketStreet Contributor Timeline](Assets/contributor-timeline.svg)
 
 ## Team Members
 
