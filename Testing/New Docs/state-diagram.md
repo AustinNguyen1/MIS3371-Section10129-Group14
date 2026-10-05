@@ -1,3 +1,6 @@
+# MarketStreet — State Transition Diagram
+
+```mermaid
 flowchart LR
     S["Submitted<br/>transactionId assigned<br/>submittedAt recorded"]
     V["Validated<br/>symbol, trade type, quantity<br/>price, cash/shares verified"]
@@ -8,3 +11,4 @@ flowchart LR
     S -- "validation fails" --> R
     V -- "commit succeeds" --> A
     V -- "update fails + rollback" --> R
+```
