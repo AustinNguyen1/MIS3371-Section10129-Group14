@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/marketstreet-logo.png" alt="MarketStreet" width="520">
+  <img src="Assets/marketstreet-logo.png" alt="MarketStreet" width="520">
 </p>
 
 MarketStreet is a simulated stock trading application that allows users to place and track paper-trading transactions without using real money.
