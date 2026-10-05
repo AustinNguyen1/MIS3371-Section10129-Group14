@@ -1,11 +1,11 @@
 stateDiagram-v2
 [*] --> Submitted: Order received
 
-    Submitted --> Validated: Symbol, Buy/Sell, quantity,<br/>price, and cash/shares valid
-    Submitted --> Rejected: Validation or price check fails
+    Submitted --> Validated: Validation passes
+    Submitted --> Rejected: Validation fails
 
-    Validated --> Accepted: Portfolio + transaction commit succeeds
-    Validated --> Rejected: Update fails → rollback
+    Validated --> Accepted: Portfolio update succeeds
+    Validated --> Rejected: Update fails and rolls back
 
     Accepted --> [*]
     Rejected --> [*]
@@ -17,20 +17,22 @@ stateDiagram-v2
     end note
 
     note right of Validated
-      executionPrice known
-      transactionValue calculated
-      cash / shares verified
+      symbol validated
+      Buy/Sell validated
+      quantity validated
+      price validated
+      cash or shares verified
     end note
 
     note right of Accepted
       FINAL
       completedAt recorded
-      cash / holdings committed
+      cash and holdings committed
     end note
 
     note right of Rejected
       FINAL
       rejectionReason recorded
       portfolio unchanged or restored
-      corrected order = new transaction
+      corrected order uses a new transaction
     end note
