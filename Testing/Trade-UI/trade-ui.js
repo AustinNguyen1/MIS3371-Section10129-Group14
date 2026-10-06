@@ -6,11 +6,13 @@ const PRICES = {
   AMZN: 178.25,
   GOOGL: 164.8,
   NVDA: 121.4,
+  IBM: 221.1,
+  // Consider limiting the amount of stocks shown here
 };
 
 const account = {
   cash: 10000,
-  holdings: { AAPL: 10, MSFT: 2 },
+  holdings: { AAPL: 10, MSFT: 2, IBM: 1},
 };
 
 let nextId = 418;
