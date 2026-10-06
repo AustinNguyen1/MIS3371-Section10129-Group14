@@ -19,12 +19,50 @@ flowchart LR
     classDef validated fill:#fff8c5,stroke:#9a6700,color:#24292f,stroke-width:2px
     classDef accepted fill:#dafbe1,stroke:#1a7f37,color:#24292f,stroke-width:2px
     classDef rejected fill:#ffebe9,stroke:#cf222e,color:#24292f,stroke-width:2px
+
     class D draft
     class S submitted
     class V validated
     class A accepted
     class R rejected
 ```
+
+## Exception / Failure Paths
+
+The following paths show how MarketStreet handles errors that interrupt the normal transaction flow. Exception 1 occurs before a transaction record exists. Exceptions 2 and 3 occur after submission and result in the transaction entering the **Rejected** state.
+
+```mermaid
+flowchart LR
+    E1(("Exception<br/>1"))
+    I1["Invalid Input"]
+    O1["Display error<br/>message to user"]
+
+    E2(("Exception<br/>2"))
+    I2["Business Rule<br/>Validation Failure"]
+    O2["Set status to Rejected<br/>cash and holdings<br/>remain unchanged"]
+
+    E3(("Exception<br/>3"))
+    I3["Portfolio Update<br/>Failure"]
+    O3["Set status to Rejected<br/>cash and holdings return<br/>to previous values"]
+
+    E1 --> I1 --> O1
+    E2 --> I2 --> O2
+    E3 --> I3 --> O3
+
+    classDef exception fill:#246b8e,stroke:#16445b,color:#ffffff,stroke-width:1.5px
+    classDef failure fill:#f2a47f,stroke:#f06b27,color:#111111,stroke-width:1.5px
+
+    class E1,E2,E3 exception
+    class I1,I2,I3,O1,O2,O3 failure
+
+    linkStyle default stroke:#c94f27,stroke-width:3px
+```
+
+| Exception | Happens at | Trigger | Result |
+|---|---|---|---|
+| **Exception 1 — Invalid Input** | **Draft** | The user enters invalid form data, such as an invalid trade type, stock symbol, or quantity (BR-1 to BR-3). | Display an error message. The order remains in **Draft** and nothing is saved. |
+| **Exception 2 — Business Rule Validation Failure** | **Submitted → Rejected** | The application rejects the submitted trade during validation (BR-1 to BR-6), such as insufficient cash, insufficient shares, or an invalid stock price. | Set the transaction status to **Rejected**. Cash and holdings remain unchanged. |
+| **Exception 3 — Portfolio Update Failure** | **Validated → Rejected** | An error occurs while committing the validated trade to the portfolio (BR-7 / BR-8). | Roll back the attempted update, set the transaction status to **Rejected**, and restore cash and holdings to their previous values. |
 
 ## States
 
@@ -36,9 +74,9 @@ flowchart LR
 | **Accepted** | Application | Yes | Yes |
 | **Rejected** | Application | Yes, with the reason | Yes |
 
-**Draft** has a dashed border because it exists only in the browser. Form errors (BR-1 to BR-3) keep the order in Draft until the user fixes them, so nothing is saved. Once the user submits, the application re-checks BR-1 to BR-3 (browser checks can be bypassed) and checks BR-4 to BR-6, which only the application can verify.
+**Draft** has a dashed border because it exists only in the browser. Form errors (BR-1 to BR-3) keep the order in Draft until the user fixes them, so nothing is saved. Once the user submits, the application re-checks BR-1 to BR-3 because browser checks can be bypassed, and checks BR-4 to BR-6, which require application data.
 
-## Business rules on this diagram
+## Business Rules on this Diagram
 
 | Rule | Meaning | Where it appears |
 |---|---|---|

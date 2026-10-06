@@ -16,6 +16,10 @@ The primary transaction is:
 
 The system validates the transaction, applies applicable business rules, records the trade request, and returns a transaction status.
 
+## System Design
+
+[Browse the system design documents](docs/03-system-design/README.md) for the architecture, workflow, trade states, field definitions, and tier responsibilities.
+
 ## Project Purpose
 
 The purpose of this project is to demonstrate the complete processing of a stock trading transaction from user input through validation, business rules, system processing, and record creation.
