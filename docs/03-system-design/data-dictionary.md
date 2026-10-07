@@ -23,4 +23,4 @@ The data dictionary defines the fields used to submit, validate, execute, and re
 | `completedAt` | Time the trade reached a final outcome | System / audit | datetime | If final | Application | Set when status becomes `Accepted` or `Rejected` | `2026-09-20T20:21:10Z` |
 | `updatedAt` | Time the official trade record was last updated | System / audit | datetime | Yes — system generated | Application | Updated whenever the transaction record changes | `2026-09-20T20:21:10Z` |
 
-Details: [Trade states](state-diagram.md) · [Trade processing and saves](workflow-v1.md) · [Tier responsibilities](short-responsibility-notes.md).
+Details: [Trade states](state-diagram.md) · [Trade processing and saves](workflow.md) · [Tier responsibilities](short-responsibility-notes.md).

@@ -4,7 +4,7 @@ These PNG files are historical snapshots. Use the [current Markdown documents](.
 
 | Snapshot | Current reference |
 |---|---|
-| `architecture-v1.png` | [Architecture](../architecture-v1.md) |
-| `workflow-v1.png` | [Workflow](../workflow-v1.md) |
+| `architecture.png` | [Architecture](../architecture.md) |
+| `workflow.png` | [Workflow](../workflow.md) |
 | `state-diagram.png`, `state-definitions.png` | [Trade states](../state-diagram.md) |
-| `exception-path.png` | [Workflow exception handling](../workflow-v1.md) |
+| `exception-path.png` | [Workflow exception handling](../workflow.md) |

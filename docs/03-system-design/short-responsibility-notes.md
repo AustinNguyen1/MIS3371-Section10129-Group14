@@ -1,6 +1,6 @@
 # Tier Responsibility Summary
 
-Each row assigns work to the tiers shown in the [architecture diagram](architecture-v1.md).
+Each row assigns work to the tiers shown in the [architecture diagram](architecture.md).
 
 | Responsibility | Presentation: browser | Application logic: backend | Data: database |
 |---|---|---|---|
@@ -15,4 +15,4 @@ Each row assigns work to the tiers shown in the [architecture diagram](architect
 | Rejected trade | Display saved reason | Reject invalid trades; coordinate rollback after a known update failure | Preserve portfolio; persist rejection after rollback |
 | Transaction history | Request and display history | Authorize read access; return saved trades | Read official trade records |
 
-Details: [Trade workflow](workflow-v1.md) · [Field definitions](data-dictionary.md).
+Details: [Trade workflow](workflow.md) · [Field definitions](data-dictionary.md).
