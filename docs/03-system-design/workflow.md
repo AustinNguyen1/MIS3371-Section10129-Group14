@@ -151,4 +151,4 @@ transaction record`"]
 
 **Save rule:** Cash, holdings, and the Accepted record are committed together before confirmation is shown.
 
-Details: [Business rules](../02-requirements/business-rules.md) · [Trade states and exception paths](state-diagram.md) · [Three-tier architecture](architecture-v1.md) · [Data dictionary](data-dictionary.md).
+Details: [Business rules](../02-requirements/business-rules.md) · [Trade states and exception paths](state-diagram.md) · [Three-tier architecture](architecture.md) · [Data dictionary](data-dictionary.md).

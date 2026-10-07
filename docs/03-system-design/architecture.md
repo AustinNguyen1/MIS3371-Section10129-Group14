@@ -60,4 +60,4 @@ Only the application accesses the database. The price source supplies the applic
 
 **Implementation status:** This is the proposed architecture. The [current prototype](../../Testing/Trade-UI/trade-ui.js) runs in the browser; the backend and persistent database are planned.
 
-Details: [Trade workflow](workflow-v1.md) · [Data dictionary](data-dictionary.md) · [Trade states](state-diagram.md) · [Responsibility notes](short-responsibility-notes.md).
+Details: [Trade workflow](workflow.md) · [Data dictionary](data-dictionary.md) · [Trade states](state-diagram.md) · [Responsibility notes](short-responsibility-notes.md).
