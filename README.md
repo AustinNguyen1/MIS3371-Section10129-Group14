@@ -20,6 +20,10 @@ The system validates the transaction, applies applicable business rules, records
 
 [Browse the system design documents](docs/03-system-design/README.md) for the architecture, workflow, trade states, field definitions, and tier responsibilities.
 
+## Testing
+
+The [test cases](docs/04-testing/test-cases.md) check every business rule at its boundary, and the [traceability matrix](docs/04-testing/traceability-matrix.md) links each requirement to its rules, user stories, and tests.
+
 ## Project Purpose
 
 The purpose of this project is to demonstrate the complete processing of a stock trading transaction from user input through validation, business rules, system processing, and record creation.
@@ -29,7 +33,7 @@ The purpose of this project is to demonstrate the complete processing of a stock
 ![MarketStreet Team Activity](Assets/team-activity.svg)
 ## Team Members
 
-- Austin Nguyen
+- Austin Tran Nguyen
 - Sophia Musetti
 - Arya Nair
 - Benjamin Nguyen

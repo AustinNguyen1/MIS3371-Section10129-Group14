@@ -1,0 +1,474 @@
+/* MarketStreet — styles */
+
+:root {
+  --brand: #1e3a8a;
+  --buy: #15803d;
+  --sell: #b91c1c;
+  --bg: #f5f7fa;
+  --text: #111827;
+  --muted: #4b5563;
+  --border: #d1d5db;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, Arial, sans-serif;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+}
+
+a {
+  color: var(--brand);
+}
+
+:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Hidden on screen but read by screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* ---------- Page layout ---------- */
+
+.site-header {
+  background: var(--brand);
+}
+
+.inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 12px 16px;
+}
+
+.site-header a,
+.site-header span {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.site-nav {
+  display: flex;
+  gap: 16px;
+  margin-left: auto;
+}
+
+.site-nav [aria-current="page"] {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.search input {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+}
+
+main {
+  max-width: 560px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+main.wide {
+  max-width: 880px;
+}
+
+.layout {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr 320px;
+    align-items: start;
+  }
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+h1,
+h2 {
+  margin: 0 0 12px;
+}
+
+.note,
+.help,
+.company,
+.site-footer {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.site-footer {
+  text-align: center;
+}
+
+.big,
+.price {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.up {
+  color: var(--buy);
+}
+
+.down,
+.error,
+.warning {
+  color: var(--sell);
+}
+
+/* ---------- Chart ---------- */
+
+.chart {
+  position: relative;
+}
+
+.chart .grid {
+  stroke: #e5e7eb;
+}
+
+.chart .axis {
+  fill: var(--muted);
+  font-size: 12px;
+}
+
+.chart .line {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 2;
+}
+
+.chart .area {
+  fill: var(--brand);
+  opacity: 0.08;
+}
+
+.chart .crosshair {
+  stroke: var(--muted);
+  stroke-dasharray: 3 3;
+}
+
+.chart .dot {
+  fill: var(--brand);
+}
+
+.tooltip {
+  position: absolute;
+  top: 0;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--text);
+  color: #ffffff;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.tooltip span {
+  margin-left: 6px;
+}
+
+.ranges button {
+  padding: 4px 10px;
+  border: none;
+  background: none;
+  color: var(--muted);
+}
+
+.ranges [aria-pressed="true"] {
+  color: var(--brand);
+  font-weight: 700;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin: 0;
+}
+
+.stats dt {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.stats dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ---------- Forms ---------- */
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 16px;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  font-weight: 600;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"] {
+  width: 100%;
+  font: inherit;
+  padding: 10px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+}
+
+[aria-invalid="true"] {
+  border-color: var(--sell);
+}
+
+.help,
+.error {
+  margin: 4px 0 0;
+}
+
+.error,
+.warning {
+  font-weight: 600;
+}
+
+/* Buy / Sell toggle made from two radio buttons */
+.toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.toggle input {
+  position: absolute;
+  opacity: 0;
+}
+
+.toggle label {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.toggle input:focus-visible + label {
+  outline: 3px solid var(--brand);
+}
+
+#buy:checked + label {
+  background: var(--buy);
+  border-color: var(--buy);
+  color: #ffffff;
+}
+
+#sell:checked + label {
+  background: var(--sell);
+  border-color: var(--sell);
+  color: #ffffff;
+}
+
+.position,
+.order-type,
+.estimate {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.estimate {
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+/* ---------- Buttons ---------- */
+
+.button {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border: 2px solid var(--brand);
+  border-radius: 8px;
+  background: var(--brand);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button.buy {
+  background: var(--buy);
+  border-color: var(--buy);
+}
+
+.button.sell {
+  background: var(--sell);
+  border-color: var(--sell);
+}
+
+.button.secondary {
+  background: #ffffff;
+  color: var(--brand);
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.link-button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--brand);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---------- Result and history ---------- */
+
+.badge {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.badge.accepted {
+  background: #dcfce7;
+  color: var(--buy);
+}
+
+.badge.rejected {
+  background: #fee2e2;
+  color: var(--sell);
+}
+
+.reason {
+  padding: 10px 14px;
+  border-left: 4px solid var(--sell);
+  background: #fee2e2;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+}
+
+.details dt {
+  color: var(--muted);
+}
+
+.details dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.num {
+  text-align: right;
+}
+
+/* ---------- Phones: stack everything, no sideways scrolling ---------- */
+
+@media (max-width: 640px) {
+  .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .button-row {
+    grid-template-columns: 1fr;
+  }
+
+  .site-nav {
+    margin-left: 0;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tr {
+    display: block;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+    border: none;
+  }
+
+  td::before {
+    content: attr(data-label);
+    color: var(--muted);
+  }
+}

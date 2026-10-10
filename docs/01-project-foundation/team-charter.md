@@ -15,7 +15,7 @@ Agah Duzenli
 Arya Nair
 
 **QA / Documentation Lead**  
-Shayaan M Dawra
+Shayaan M. Dawra
 
 **Support / Floater**  
 Benjamin Nguyen  
@@ -31,7 +31,7 @@ Supports UI, JavaScript, testing, and documentation as needed.
 ## Communication
 
 - Communication between team members will be done through Messages.
-- Important project decisions should be documented in the group Messages chat.
+- Important project decisions are discussed in the group Messages chat and then recorded in the repository's [decision log](../decisions.md) so they can be reviewed and defended later.
 - If an issue arises that no team member can solve and it significantly affects the project, the Team Leader should reach out to the TA for guidance.
 
 ## Git Workflow

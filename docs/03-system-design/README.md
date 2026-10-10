@@ -8,6 +8,6 @@
 | [Data dictionary](data-dictionary.md) | Field meanings, types, sources, constraints, and examples. |
 | [Tier responsibilities](short-responsibility-notes.md) | Which tier performs each responsibility. |
 
-[Business rules](../02-requirements/business-rules.md) define BR-1 through BR-8. The [project scope](../01-project-foundation/project-proposal.md#5-initial-scope) defines supported order behavior.
+[Business rules](../02-requirements/business-rules.md) define BR-1 through BR-9. Design decisions are recorded in the [decision log](../decisions.md). The [project scope](../01-project-foundation/project-proposal.md#5-initial-scope) defines supported order behavior.
 
 The Markdown documents are the current design references. Earlier PNG diagrams are preserved in [archive](archive/README.md).
