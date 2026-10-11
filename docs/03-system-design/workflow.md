@@ -1,140 +1,88 @@
 # MarketStreet — Stock Trade Order Workflow
 
-**Main transaction:** User submits a simulated stock trade order.
+**Main transaction:** User submits a simulated stock trade order (Market order).
 
 ```mermaid
 flowchart TB
-    subgraph PRESENTATION["Presentation Layer · User Interface"]
-        direction TB
-        START(["Start"])
-        STOCK["`User selects a stock
-(symbol)`"]
-        TYPE["`User selects trade type
-(Buy or Sell)`"]
-        QUANTITY["User enters quantity"]
-        SUBMIT["User submits order"]
-        FIELDS{"`All required fields
-completed correctly?`"}
-        ERROR["`Display error
-message to user`"]
-        RETURN["`Return to order entry
-(for user to correct)`"]
-        CONFIRM["`Display confirmation
-message to user`"]
-        FINISH(["End"])
-    end
+    START(["Start · user is signed in"]):::start
+    FORM["<b>Fill in order form</b><br/>stock · Buy/Sell · quantity"]:::ui
+    FIELDS{"Form valid?<br/>BR-1 · 2 · 3"}:::decision
+    FIX["Show error next to field<br/><i>still a Draft · not saved</i>"]:::bad
 
-    subgraph APPLICATION["Application Layer · Business Logic and Processing"]
-        direction TB
-        RECEIVE["`Application
-receives order`"]
-        SUBMITTED["`Set status =
-Submitted`"]
-        INPUT{"`Type, symbol,
-and quantity valid?
-(BR-1, BR-2, BR-3)`"}
-        PRICE{"`Valid price
-available?
-(BR-6)`"}
-        FUNDS{"`Enough cash
-or shares?
-(BR-4, BR-5)`"}
-        VALIDATED["`Set status =
-Validated`"]
-        UPDATE["`Update cash
-and holdings
-(BR-7)`"]
-        SUCCESS{"`Did the update
-succeed?`"}
-        ACCEPTED["`Set status =
-Accepted`"]
-        REJECTED["`Set status to Rejected
-Record reason
-Cash and holdings remain unchanged
-(BR-8)`"]
-        ROLLBACK["`Roll back update; set status to Rejected
-Record reason
-Cash and holdings return to previous values
-(BR-8)`"]
-        SEND["Send confirmation to UI"]
-    end
+    RECEIVE["<b>Receive order</b><br/>assign transactionId<br/>status → Submitted<br/><i>DB write</i>"]:::app
+    INPUT{"Input valid?<br/>BR-1 · 2 · 3 · 9"}:::decision
+    PRICE{"Valid price?<br/>BR-6"}:::decision
+    FUNDS{"Enough cash<br/>or shares?<br/>BR-4 · 5"}:::decision
+    VALIDATED["status → Validated<br/><i>DB write</i>"]:::app
+    COMMIT["<b>Atomic commit</b><br/>lock account · re-check funds<br/>if OK: update cash + holdings<br/>and set status → Accepted<br/><i>DB write</i>"]:::app
+    RESULT{"Commit<br/>result?"}:::decision
 
-    subgraph DATA["Data Layer · Database"]
-        direction TB
-        SAVE_SUBMITTED["`Save transaction record
-(Status = Submitted)`"]
-        SAVE_ACCOUNT["`Update account
-cash / holdings`"]
-        SAVE_REJECTED["`Save rejected transaction
-record (including reason)`"]
-        SAVE_ACCEPTED["`Save accepted
-transaction record`"]
-    end
+    R1(("R")):::conn
+    R2(("R")):::conn
+    R3(("R")):::conn
+    RIN(("R")):::conn
 
-    START --> STOCK
-    STOCK --> TYPE
-    TYPE --> QUANTITY
-    QUANTITY --> SUBMIT
-    SUBMIT --> FIELDS
-    FIELDS -- "Yes" --> RECEIVE
-    RECEIVE --> SUBMITTED
-    SUBMITTED --> INPUT
-    INPUT -- "Yes" --> PRICE
-    PRICE -- "Yes" --> FUNDS
-    FUNDS -- "Yes" --> VALIDATED
-    VALIDATED --> UPDATE
-    UPDATE --> SUCCESS
-    SUCCESS -- "Yes" --> ACCEPTED
-    ACCEPTED --> SAVE_ACCEPTED
-    SAVE_ACCEPTED --> SEND
-    SEND --> CONFIRM
-    CONFIRM --> FINISH
+    ACCEPTED["<b>Accepted</b><br/>portfolio updated"]:::ok
+    ROLLBACK["<b>Rejected</b> · System<br/>commit rolled back<br/>portfolio restored<br/><i>DB write</i>"]:::bad
+    REJECT["<b>Rejected</b> · Rule<br/>reason saved<br/>portfolio unchanged<br/><i>DB write</i>"]:::bad
+    SHOW["<b>Show saved result</b><br/>confirmation or reason"]:::ui
+    FINISH(["End"]):::start
 
-    FIELDS -- "No" --> ERROR
-    ERROR --> RETURN
-    RETURN --> STOCK
-    INPUT -- "No" --> REJECTED
-    PRICE -- "No" --> REJECTED
-    FUNDS -- "No" --> REJECTED
-    REJECTED --> ERROR
-    REJECTED --> SAVE_REJECTED
-    SUCCESS -- "No" --> ROLLBACK
-    ROLLBACK --> ERROR
-    ROLLBACK --> SAVE_REJECTED
+    START --> FORM --> FIELDS
+    FIELDS -- Yes --> RECEIVE --> INPUT
+    FIELDS -- No --> FIX
+    FIX -- user fixes --> FORM
+    INPUT -- Yes --> PRICE
+    PRICE -- Yes --> FUNDS
+    FUNDS -- Yes --> VALIDATED --> COMMIT --> RESULT
 
-    SUBMITTED -.-> SAVE_SUBMITTED
-    UPDATE -.-> SAVE_ACCOUNT
+    INPUT -- No --> R1
+    PRICE -- No --> R2
+    FUNDS -- No --> R3
+    RIN --> REJECT
 
-    classDef terminal fill:#075ca6,stroke:#075ca6,color:#ffffff,stroke-width:2px
-    classDef presentationData fill:#bddafa,stroke:#316498,color:#111111,stroke-width:1.5px
-    classDef application fill:#c6e8b5,stroke:#3d7136,color:#111111,stroke-width:1.5px
-    classDef decision fill:#c6e8b5,stroke:#3d7136,color:#111111,stroke-width:1.5px
-    classDef error fill:#ffcaca,stroke:#dc5252,color:#111111,stroke-width:1.5px
-    class START,FINISH terminal
-    class STOCK,TYPE,QUANTITY,SUBMIT,RETURN,CONFIRM,SAVE_SUBMITTED,SAVE_ACCOUNT,SAVE_REJECTED,SAVE_ACCEPTED presentationData
-    class RECEIVE,SUBMITTED,VALIDATED,UPDATE,ACCEPTED,SEND application
-    class FIELDS,INPUT,PRICE,FUNDS,SUCCESS decision
-    class ERROR,REJECTED,ROLLBACK error
+    RESULT -- Success --> ACCEPTED
+    RESULT -- "System error" --> ROLLBACK
+    RESULT -- "Re-check fails" --> REJECT
 
-    linkStyle 18,19,20,21,22,23,24,25,26,27,28 stroke:#dc5252,color:#dc5252,stroke-width:2px
-    linkStyle 29,30 stroke:#0969da,color:#0969da,stroke-width:2px
+    ACCEPTED --> SHOW
+    ROLLBACK --> SHOW
+    REJECT --> SHOW
+    SHOW --> FINISH
 
-    %% Cash, holdings, and the Accepted record must commit together.
-    %% Confirmation follows the confirmed save; uncertain storage outcomes require verification before retrying.
-    %% Accepted is controlled by the application; database nodes persist the records.
+    classDef start fill:#0b4f8a,stroke:#0b4f8a,color:#ffffff
+    classDef ui fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef app fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    classDef ok fill:#16a34a,stroke:#15803d,color:#ffffff
+    classDef decision fill:#fef9c3,stroke:#a16207,color:#0f172a
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+    classDef conn fill:#ffffff,stroke:#dc2626,color:#dc2626,stroke-width:2px
 ```
 
 ## Legend
 
-| Shape / Line | Meaning |
+| Symbol | Meaning |
 |---|---|
-| Dark blue rounded box | Start / End |
-| Blue rectangle | Presentation or Data process / action |
-| Green rectangle | Application process / action |
-| Green diamond | Decision |
-| Solid arrow | Normal flow |
-| Red arrow | Rejection / error flow |
-| Blue dashed arrow | Database write |
+| Dark blue pill | Start / End |
+| Blue box | **Presentation tier** (browser) step |
+| Green box | **Application tier** step |
+| Yellow diamond | Decision |
+| Solid green box | Successful outcome |
+| Red box | Error or rejection |
+| Red circle **R** | Connector: continues at the **R** above "Rejected · Rule" |
+| *DB write* | The step writes to the **data tier** (see table below) |
+
+## Database Writes (Data Tier)
+
+Only the application writes to the database. Each *DB write* in the diagram is one of these writes.
+
+| Step | What is saved | Notes |
+|---|---|---|
+| Receive order | New transaction record, status `Submitted`, `submittedAt` | If this save fails, no trade exists; the user is told the system is unavailable. |
+| Validated | Status `Validated`, `validatedAt`, execution price, value, price timestamp | |
+| Atomic commit | Cash balance + holdings + status `Accepted`, `completedAt` | **One database transaction.** Either all of it is saved or none of it. |
+| Rejected · Rule | Status `Rejected`, `rejectionReason`, `rejectionCategory = Rule`, `completedAt`; execution price, value, and price timestamp if a valid price was obtained | Cash and holdings are never touched. |
+| Rejected · System | Status `Rejected`, `rejectionReason`, `rejectionCategory = System`, `completedAt` | Saved after the failed commit is rolled back. |
 
 ## Business Rules
 
@@ -143,12 +91,19 @@ transaction record`"]
 | BR-1 | Trade type is Buy or Sell. |
 | BR-2 | Stock symbol is recognized. |
 | BR-3 | Quantity is a positive whole number. |
-| BR-4 | Buy orders have enough cash to cover the trade. |
-| BR-5 | Sell orders have enough shares owned. |
-| BR-6 | A valid stock price is available. |
-| BR-7 | Accepted trades update cash and holdings. |
-| BR-8 | Rejected trades leave cash and holdings unchanged; failed updates are rolled back to previous values. |
+| BR-4 | Buy orders have enough cash to cover the trade (re-checked inside the commit). |
+| BR-5 | Sell orders have enough shares owned (re-checked inside the commit). |
+| BR-6 | A valid stock price is available: greater than $0 and no more than 15 minutes old. |
+| BR-7 | Accepted trades update cash, holdings, and the Accepted record in one atomic commit. |
+| BR-8 | Rejected trades leave cash and holdings unchanged; a failed commit is rolled back. |
+| BR-9 | Only Market orders are executed; Limit orders are rejected. |
 
-**Save rule:** Cash, holdings, and the Accepted record are committed together before confirmation is shown.
+## Save Rules
+
+1. **One commit for an accepted trade.** Cash, holdings, and the Accepted record are written in one database transaction. Either all three are saved or none are. The diagram has no path where the portfolio changes but the record does not (or the reverse).
+2. **Check again inside the commit.** The account row is locked and BR-4 / BR-5 are re-checked inside the commit. Two orders submitted at the same time cannot both spend the same cash or sell the same shares.
+3. **Save before showing.** The user sees a result only after it has been saved, for both Accepted and Rejected trades.
+4. **Two kinds of rejection.** `Rule` means the order broke a business rule. `System` means the order was valid but the commit failed and was rolled back. Both end in the Rejected status, and the category keeps them apart in history and audits.
+5. **If a save itself fails.** If the database cannot save a record at all (for example, the Submitted record), the user is told the system is unavailable and to try again. No result is claimed, and the user's cash and holdings are not touched.
 
 Details: [Business rules](../02-requirements/business-rules.md) · [Trade states and exception paths](state-diagram.md) · [Three-tier architecture](architecture.md) · [Data dictionary](data-dictionary.md).

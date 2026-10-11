@@ -1,68 +1,69 @@
 # MarketStreet — State Transition Diagram
 
-```mermaid
-flowchart LR
-    D["Draft<br/>user filling in the form<br/>form errors fixed here<br/>(BR-1 to BR-3)<br/>browser only · not saved"]
-    S["Submitted<br/>transactionId assigned<br/>submittedAt recorded"]
-    V["Validated<br/>trade type (BR-1)<br/>symbol (BR-2)<br/>quantity (BR-3)<br/>price (BR-6)<br/>cash (BR-4) or shares (BR-5)"]
-    A["Accepted<br/>FINAL<br/>portfolio committed<br/>(BR-7)"]
-    R["Rejected<br/>FINAL<br/>reason saved<br/>portfolio unchanged<br/>or restored (BR-8)"]
+A trade has four official statuses: **Submitted, Validated, Accepted, Rejected**. **Draft** (dashed border) is shown for context only: it is the unsent form in the browser, it is not a status value, and it is never saved.
 
-    D -- "user submits<br/>a valid form" --> S
-    S -- "all checks pass<br/>(BR-1 to BR-6)" --> V
-    S -- "validation fails<br/>(BR-1 to BR-6)" --> R
-    V -- "commit succeeds<br/>(BR-7)" --> A
-    V -- "update fails<br/>+ rollback (BR-8)" --> R
+```mermaid
+stateDiagram-v2
+    direction TB
+
+    state "Draft" as Draft
+    state "Submitted" as Submitted
+    state "Validated" as Validated
+    state "Accepted" as Accepted
+    state "Rejected" as Rejected
+
+    Draft : browser only, not saved<br/>form errors are fixed here
+    Submitted : transactionId assigned<br/>submittedAt saved
+    Validated : executionPrice fixed<br/>validatedAt saved
+    Accepted : FINAL<br/>cash + holdings updated
+    Rejected : FINAL<br/>reason + category saved<br/>portfolio unchanged or restored
+
+    [*] --> Draft : user opens order form
+    Draft --> Submitted : user submits a valid form
+    Submitted --> Validated : all checks pass<br/>BR-1–6, BR-9
+    Submitted --> Rejected : business rule fails [Rule]
+    Validated --> Accepted : commit succeeds, BR-7
+    Validated --> Rejected : re-check fails [Rule]<br/>system error [System]
+    Accepted --> [*]
+    Rejected --> [*]
 
     classDef draft fill:#f6f8fa,stroke:#57606a,color:#24292f,stroke-width:2px,stroke-dasharray:6 4
-    classDef submitted fill:#ddf4ff,stroke:#0969DA,color:#24292f,stroke-width:2px
-    classDef validated fill:#fff8c5,stroke:#9a6700,color:#24292f,stroke-width:2px
-    classDef accepted fill:#dafbe1,stroke:#1a7f37,color:#24292f,stroke-width:2px
-    classDef rejected fill:#ffebe9,stroke:#cf222e,color:#24292f,stroke-width:2px
-
-    class D draft
-    class S submitted
-    class V validated
-    class A accepted
-    class R rejected
+    classDef submitted fill:#dbeafe,stroke:#2563eb,color:#0f172a,stroke-width:2px
+    classDef validated fill:#fef9c3,stroke:#a16207,color:#0f172a,stroke-width:2px
+    classDef accepted fill:#dcfce7,stroke:#16a34a,color:#0f172a,stroke-width:2px
+    classDef rejected fill:#fee2e2,stroke:#dc2626,color:#0f172a,stroke-width:2px
+    class Draft draft
+    class Submitted submitted
+    class Validated validated
+    class Accepted accepted
+    class Rejected rejected
 ```
+
+**How to read it:** each arrow is a transition, labeled with what causes it. `[Rule]` and `[System]` are the `rejectionCategory` saved with a Rejected trade. Accepted and Rejected are final, so both lead to the end marker; a corrected order starts over as a new transaction.
 
 ## Exception / Failure Paths
 
-The following paths show how MarketStreet handles errors that interrupt the normal transaction flow. Exception 1 occurs before a transaction record exists. Exceptions 2 and 3 occur after submission and result in the transaction entering the **Rejected** state.
+The following paths show how MarketStreet handles errors that interrupt the normal transaction flow. Exception 1 occurs before a transaction record exists. Exceptions 2, 3, and 4 occur after submission and result in the transaction entering the **Rejected** state.
 
 ```mermaid
 flowchart LR
-    E1(("Exception<br/>1"))
-    I1["Invalid Input"]
-    O1["Display error<br/>message to user"]
+    E1(("1")):::num --> I1["Invalid form input<br/><i>in Draft</i>"]:::cause --> O1["Show error next to field<br/>nothing saved"]:::draft
+    E2(("2")):::num --> I2["Business rule fails<br/><i>Submitted</i>"]:::cause --> O2["Rejected · Rule<br/>portfolio unchanged"]:::rejected
+    E3(("3")):::num --> I3["Re-check fails in commit<br/><i>Validated</i>"]:::cause --> O3["Rejected · Rule<br/>portfolio unchanged"]:::rejected
+    E4(("4")):::num --> I4["System error during commit<br/><i>Validated</i>"]:::cause --> O4["Rolled back · Rejected · System<br/>portfolio restored"]:::rejected
 
-    E2(("Exception<br/>2"))
-    I2["Business Rule<br/>Validation Failure"]
-    O2["Set status to Rejected<br/>cash and holdings<br/>remain unchanged"]
-
-    E3(("Exception<br/>3"))
-    I3["Portfolio Update<br/>Failure"]
-    O3["Set status to Rejected<br/>cash and holdings return<br/>to previous values"]
-
-    E1 --> I1 --> O1
-    E2 --> I2 --> O2
-    E3 --> I3 --> O3
-
-    classDef exception fill:#246b8e,stroke:#16445b,color:#ffffff,stroke-width:1.5px
-    classDef failure fill:#f2a47f,stroke:#f06b27,color:#111111,stroke-width:1.5px
-
-    class E1,E2,E3 exception
-    class I1,I2,I3,O1,O2,O3 failure
-
-    linkStyle default stroke:#c94f27,stroke-width:3px
+    classDef num fill:#0b4f8a,stroke:#0b4f8a,color:#ffffff
+    classDef cause fill:#fef9c3,stroke:#a16207,color:#0f172a
+    classDef draft fill:#f6f8fa,stroke:#57606a,color:#24292f,stroke-dasharray:6 4
+    classDef rejected fill:#fee2e2,stroke:#dc2626,color:#0f172a
 ```
 
 | Exception | Happens at | Trigger | Result |
 |---|---|---|---|
 | **Exception 1 — Invalid Input** | **Draft** | The user enters invalid form data, such as an invalid trade type, stock symbol, or quantity (BR-1 to BR-3). | Display an error message. The order remains in **Draft** and nothing is saved. |
-| **Exception 2 — Business Rule Validation Failure** | **Submitted → Rejected** | The application rejects the submitted trade during validation (BR-1 to BR-6), such as insufficient cash, insufficient shares, or an invalid stock price. | Set the transaction status to **Rejected**. Cash and holdings remain unchanged. |
-| **Exception 3 — Portfolio Update Failure** | **Validated → Rejected** | An error occurs while committing the validated trade to the portfolio (BR-7 / BR-8). | Roll back the attempted update, set the transaction status to **Rejected**, and restore cash and holdings to their previous values. |
+| **Exception 2 — Business Rule Validation Failure** | **Submitted → Rejected** | The application rejects the submitted trade during validation (BR-1 to BR-6, BR-9), such as insufficient cash, insufficient shares, an invalid or stale stock price, or a Limit order. | Set the status to **Rejected** with category **Rule** and a reason. Cash and holdings remain unchanged. |
+| **Exception 3 — Re-check Fails Inside Commit** | **Validated → Rejected** | Between validation and commit, another order from the same account used the cash or shares, so BR-4 or BR-5 fails when re-checked against the locked account. | Abort the commit. Set the status to **Rejected** with category **Rule** and a reason. Cash and holdings remain unchanged. |
+| **Exception 4 — System Error During Commit** | **Validated → Rejected** | A technical failure (for example, the database connection drops or the server crashes) occurs while committing the validated trade (BR-7 / BR-8). | Roll back the commit, set the status to **Rejected** with category **System**, and keep cash and holdings at their previous values. |
 
 ## States
 
@@ -72,9 +73,9 @@ flowchart LR
 | **Submitted** | Application | Yes | No |
 | **Validated** | Application | Yes | No |
 | **Accepted** | Application | Yes | Yes |
-| **Rejected** | Application | Yes, with the reason | Yes |
+| **Rejected** | Application | Yes, with the reason and category | Yes |
 
-**Draft** has a dashed border because it exists only in the browser. Form errors (BR-1 to BR-3) keep the order in Draft until the user fixes them, so nothing is saved. Once the user submits, the application re-checks BR-1 to BR-3 because browser checks can be bypassed, and checks BR-4 to BR-6, which require application data.
+**Draft** has a dashed border because it exists only in the browser. Form errors (BR-1 to BR-3) keep the order in Draft until the user fixes them, so nothing is saved. Once the user submits, the application re-checks BR-1 to BR-3 because browser checks can be bypassed, and checks BR-4 to BR-6 and BR-9, which require application data. A corrected order after a rejection is a new transaction with a new transactionId; final records are never reopened.
 
 ## Business Rules on this Diagram
 
@@ -83,10 +84,11 @@ flowchart LR
 | BR-1 | Trade type must be Buy or Sell | Draft (browser check), Submitted → Validated / Rejected |
 | BR-2 | Stock symbol must be recognized | Draft (browser check), Submitted → Validated / Rejected |
 | BR-3 | Share quantity must be a positive whole number | Draft (browser check), Submitted → Validated / Rejected |
-| BR-4 | Enough simulated cash for a Buy | Submitted → Validated / Rejected |
-| BR-5 | Enough shares owned for a Sell | Submitted → Validated / Rejected |
-| BR-6 | A valid stock price is required | Submitted → Validated / Rejected |
-| BR-7 | Accepted trades update cash and holdings | Validated → Accepted |
-| BR-8 | Rejected trades change nothing; a failed update is rolled back | Submitted / Validated → Rejected |
+| BR-4 | Enough simulated cash for a Buy | Submitted → Validated / Rejected; re-checked at Validated → Accepted / Rejected |
+| BR-5 | Enough shares owned for a Sell | Submitted → Validated / Rejected; re-checked at Validated → Accepted / Rejected |
+| BR-6 | A valid stock price (> $0, ≤ 15 minutes old) is required | Submitted → Validated / Rejected |
+| BR-7 | Accepted trades update cash, holdings, and the record in one atomic commit | Validated → Accepted |
+| BR-8 | Rejected trades change nothing; a failed commit is rolled back | Submitted / Validated → Rejected |
+| BR-9 | Only Market orders are executed | Submitted → Validated / Rejected |
 
-Rule numbers match [business-rules.md](../../docs/02-requirements/business-rules.md).
+Rule numbers match [business-rules.md](../02-requirements/business-rules.md).

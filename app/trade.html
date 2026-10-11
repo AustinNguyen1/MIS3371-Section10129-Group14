@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trade – MarketStreet</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="data.js" defer></script>
+    <script src="app.js" defer></script>
+    <script src="chart.js" defer></script>
+  </head>
+
+  <body data-page="trade">
+    <header class="site-header">
+      <div class="inner">
+        <a class="logo" href="trade.html">MarketStreet</a>
+        <form class="search" action="trade.html" role="search">
+          <label for="search" class="visually-hidden">Search stocks</label>
+          <input id="search" name="symbol" type="search" list="stocks" placeholder="Search stocks" autocomplete="off" />
+          <datalist id="stocks">
+            <option value="AAPL">Apple Inc.</option>
+            <option value="MSFT">Microsoft Corp.</option>
+            <option value="TSLA">Tesla Inc.</option>
+            <option value="AMZN">Amazon.com Inc.</option>
+            <option value="GOOGL">Alphabet Inc.</option>
+            <option value="NVDA">NVIDIA Corp.</option>
+            <option value="IBM">IBM Corp.</option>
+          </datalist>
+        </form>
+        <nav class="site-nav" aria-label="Main">
+          <a href="trade.html" aria-current="page">Trade</a><a href="history.html">History</a>
+          <span class="account">U10427</span>
+          <a href="login.html">Sign out</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wide">
+      <section class="card" id="not-found" hidden>
+        <h1>Stock not found</h1>
+        <p><strong id="missing-symbol"></strong> isn't available. Use the search box to pick one of the supported stocks, or go back to <a href="trade.html">AAPL</a>.</p>
+      </section>
+
+      <div class="layout" id="stock">
+        <div>
+          <section class="card quote" aria-labelledby="stock-title">
+            <h1 id="stock-title"></h1>
+            <p class="company" id="company"></p>
+            <p class="price" id="price"></p>
+            <p id="change"></p>
+            <div class="chart" id="stock-chart" data-height="300" role="img"></div>
+            <div class="ranges" role="group" aria-label="Time range">
+              <button type="button" aria-pressed="false">1D</button>
+              <button type="button" aria-pressed="false">1W</button>
+              <button type="button" aria-pressed="true">1M</button>
+              <button type="button" aria-pressed="false">3M</button>
+              <button type="button" aria-pressed="false">1Y</button>
+            </div>
+          </section>
+
+          <section class="card" aria-labelledby="stats-title">
+            <h2 id="stats-title">Key stats</h2>
+            <dl class="stats" id="stats"></dl>
+          </section>
+        </div>
+
+        <!-- Order panel (FR-1, FR-8). Market orders only (BR-9). -->
+        <form class="card side" id="order-form" novalidate>
+          <h2 id="order-title"></h2>
+
+          <fieldset>
+            <legend class="visually-hidden">Buy or sell</legend>
+            <div class="toggle">
+              <input type="radio" id="buy" name="tradeType" value="Buy" checked />
+              <label for="buy">Buy</label>
+              <input type="radio" id="sell" name="tradeType" value="Sell" />
+              <label for="sell">Sell</label>
+            </div>
+          </fieldset>
+
+          <p class="position"><span>You own</span> <strong id="owned"></strong></p>
+          <p class="position"><span>Cash available</span> <strong id="cash"></strong></p>
+
+          <div class="field">
+            <label for="quantity">Shares</label>
+            <input id="quantity" name="quantity" type="number" min="1" step="1" value="1" inputmode="numeric" aria-describedby="quantity-hint quantity-error" />
+            <p id="quantity-hint" class="help"></p>
+            <p id="quantity-error" class="error" hidden></p>
+          </div>
+
+          <p class="order-type"><span>Order type</span> <span id="order-price"></span></p>
+
+          <p class="estimate" aria-live="polite"><span id="estimate-text"></span> <strong class="big" id="estimate-total"></strong></p>
+
+          <button type="submit" class="button buy" id="submit"></button>
+          <p class="note">Market orders execute right away at the current simulated price.</p>
+        </form>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>MarketStreet · Simulated trading, no real money</p>
+    </footer>
+  </body>
+</html>

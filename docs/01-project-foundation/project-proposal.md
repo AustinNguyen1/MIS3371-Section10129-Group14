@@ -35,10 +35,14 @@ MarketStreet aims to address these needs:
 
 | Stakeholder | Primary Need |
 |---|---|
-| Trader / User | Place simulated trades and view their portfolio and trade status |
+| Beginner Investor (User) | Place simulated trades and view their portfolio and trade status |
+| System Administrator | Keep the system available and see failed or rejected trades |
+| Market Data Provider | Receive requests that follow its usage terms and rate limits |
+| Compliance / Audit Reviewer | Trace every trade through its records and timestamps |
 | Development Team | Build and maintain the interface, trade rules, and data storage |
-| System Administrator | Keep the system available and manage technical issues |
 | Course Instructor | Review the transaction design and the team's implementation |
+
+Full details are in [Stakeholders](../02-requirements/Stakeholders.md).
 
 ---
 
@@ -50,20 +54,20 @@ MarketStreet aims to address these needs:
 
 ### Transaction trigger
 
-A user submits an order to buy or sell a selected stock with a specified number of shares.
+A signed-in user submits a Market order to buy or sell a selected stock with a specified number of shares.
 
 ### Transaction outcome
 
 The order is either:
 
 - **Accepted:** The simulated trade is completed and the user's cash and holdings are updated; or
-- **Rejected:** The trade is not completed, the reason is recorded, and cash and holdings remain unchanged.
+- **Rejected:** The trade is not completed, the reason is recorded, and cash and holdings remain unchanged (or are rolled back to their previous values if the final commit fails).
 
 ### Example transaction
 
-A user with $1,000 in simulated cash submits an order to buy 2 shares of a stock at a simulated execution price of $100 per share. The system checks the order and available cash. If the checks pass and the update succeeds, the system records an accepted $200 trade and updates the user's cash to $800 and holdings by 2 shares.
+A user with $1,000 in simulated cash submits an order to buy 2 shares of a stock at a simulated execution price of $100 per share. The system checks the order, the price, and available cash. If the checks pass and the atomic commit succeeds, the system records an accepted $200 trade and updates the user's cash to $800 and holdings by 2 shares.
 
-The team's current state model uses **Submitted → Validated → Accepted**, with a path to **Rejected** if a rule fails or the portfolio update cannot be completed.
+The team's state model has four official statuses: **Submitted → Validated → Accepted**, with a path to **Rejected** if a rule fails or the portfolio update cannot be completed. Before submission, the order is only an unsaved **Draft** form in the browser; Draft is not a status.
 
 ---
 
@@ -71,14 +75,15 @@ The team's current state model uses **Submitted → Validated → Accepted**, wi
 
 ### In scope
 
-- A web form for entering a stock symbol, buy/sell choice, and number of shares
+- Signing in to a simulated trading account (the application supplies the user ID)
+- A web form for entering a stock symbol, buy/sell choice, and number of shares (Market orders only)
 - Validation of required trade details and positive whole-share quantities
-- A simulated execution price and trade-value calculation
+- A simulated execution price (no older than 15 minutes, BR-6) and trade-value calculation
 - Checks for enough simulated cash to buy or enough shares to sell
 - Application-controlled transaction states: Submitted, Validated, Accepted, and Rejected
 - A unique transaction ID and important timestamps
-- Updating simulated cash and stock holdings for accepted trades
-- Recording accepted and rejected transactions and displaying the result to the user
+- Updating simulated cash, stock holdings, and the Accepted record together in one atomic commit
+- Recording accepted and rejected transactions, displaying the result to the user, and listing both in transaction history
 - Storing official trade and portfolio records in a database as the application is developed
 
 ### Out of scope for the initial documented transaction
@@ -87,7 +92,7 @@ The team's current state model uses **Submitted → Validated → Accepted**, wi
 - Real brokerage or bank account connections
 - Real deposits and withdrawals
 - Live execution on an actual stock market
-- **Pending limit-order processing:** The current four-state workflow covers immediate simulated execution. A limit-order feature would need its own rules and an additional state for orders waiting to execute before it is supported.
+- **Limit orders:** The current four-status workflow covers immediate Market execution only. Limit orders are rejected under BR-9. Supporting them later would need new rules and an additional status for orders waiting to execute.
 
 ---
 
