@@ -257,6 +257,17 @@ symbolInput.addEventListener("input", () => {
   symbolInput.value = symbolInput.value.toUpperCase();
 });
 
+// Validate shares as the user types so decimals show the error immediately
+sharesInput.addEventListener("input", () => {
+  // show the same message used on submit when the value is not a whole number >= 1
+  if (!/^\d+$/.test(sharesInput.value) || Number(sharesInput.value) < 1) {
+    setError(sharesInput, "shares-error", "Enter a whole number of 1 or more.");
+  } else {
+    setError(sharesInput, "shares-error", "");
+  }
+  update();
+});
+
 form.addEventListener("input", update);
 form.addEventListener("change", update);
 form.addEventListener("submit", submitTrade);
