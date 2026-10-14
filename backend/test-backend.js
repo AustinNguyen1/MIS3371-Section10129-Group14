@@ -1,4 +1,4 @@
-const {processExpenses} = require('./backend');
+const { processExpenses, processTrade } = require("./backend");
 
 const tests = [
     {
@@ -17,4 +17,36 @@ const tests = [
 
 for (const test of tests) {
     processExpenses(test);
+}
+console.log("\n--- TRADE TESTS ---");
+
+const tradeTests = [
+    {
+        symbol: "AAPL",
+        tradeType: "Buy",
+        quantity: 5,
+        price: 200,
+        cash: 5000,
+        sharesOwned: 10
+    },
+    {
+        symbol: "AAPL",
+        tradeType: "Buy",
+        quantity: 0.5,
+        price: 200,
+        cash: 5000,
+        sharesOwned: 10
+    },
+    {
+        symbol: "AAPL",
+        tradeType: "Sell",
+        quantity: 15,
+        price: 200,
+        cash: 5000,
+        sharesOwned: 10
+    }
+];
+
+for (const trade of tradeTests) {
+    console.log(processTrade(trade));
 }
